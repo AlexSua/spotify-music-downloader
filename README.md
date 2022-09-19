@@ -134,4 +134,4 @@ Project Link: [https://github.com/AlexSua/spotify-music-downloader](https://gith
 [issues-url]: https://github.com/AlexSua/spotify-music-downloader/issues
 
 [license-shield]: https://img.shields.io/github/license/AlexSua/spotify-music-downloader?style=flat-square
-[license-url]: https://github.com/AlexSua/spotify-music-downloader/blob/master/LICENSE.txt
+[license-url]: https://github.com/AlexSua/spotify-music-downloader/blob/main/LICENSE.txt
