@@ -2,7 +2,7 @@
 <!-- PROJECT LOGO -->
 <div align="center">
 
-<h1 align="center">spotify-music-downloader</h2>
+<h1 align="center">spotify-music-downloader</h1>
 
   <p align="center">
     A small script to get your music Spotify/Youtube lists locally.
