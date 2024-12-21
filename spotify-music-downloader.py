@@ -1,9 +1,11 @@
 import os
+import threading
 import requests
 import spotipy
 import yt_dlp
 import argparse
 import time
+import queue
 from spotipy.oauth2 import SpotifyClientCredentials
 
 CLIENT_ID = None
@@ -37,17 +39,33 @@ def spotifyListDownload(playlistCode, directory):
 	)
 	if client_credentials_manager:
 		sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
-		playlist = sp.playlist(playlistCode)
-		for song in playlist["tracks"]["items"]:
+		
+		results = sp.playlist(playlistCode)
+		tracks = results['tracks']
+		songs = tracks['items']
+		
+		while tracks['next']:
+			tracks = sp.next(tracks)
+			songs.extend(tracks['items'])
+			
+		q = queue.Queue()
+		for song in songs:
 			track = song["track"]
 			print(track["name"] + " - " + track["artists"][0]["name"])
 			downloadedSongName = track["name"] + " - " + track["artists"][0]["name"]
 			if not os.path.exists(directory + downloadedSongName + ".mp3"):
-				videoId = getVideoId(track["name"] + " " + track["artists"][0]["name"])
-				youtubedl(
-					"http://www.youtube.com/watch?v=" + videoId,
-					directory + downloadedSongName,
-				)
+				q.put([track["name"] + " " + track["artists"][0]["name"],
+					directory + downloadedSongName])
+		
+		def thread(q):
+			while not q.empty():
+				args = q.get()
+				print(f'Thread is doing task #{args} in the queue.')
+				youtubedl("http://www.youtube.com/watch?v=" + getVideoId(args[0]),args[1] )
+		
+		for i in range(4):
+			worker = threading.Thread(target=thread, args=(q,))
+			worker.start()
 
 
 def youtubeDownloader(youtubeLink, directory):
